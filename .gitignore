@@ -1,0 +1,26 @@
+*.iml
+.idea/
+
+target
+build-target
+*.class
+*~
+
+# Flink-specific artifacts (from https://github.com/apache/flink/blob/master/.gitignore)
+*/flink-staging/flink-avro/src/test/java/org/apache/flink/api/io/avro/generated/
+scalastyle-output.xml
+.version.properties
+
+# Mobile Tools for Java (J2ME)
+.mtj.tmp/
+
+# Package Files
+*.jar
+*.war
+*.ear
+
+# virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
+hs_err_pid*
+
+.DS_Store
+.ipynb_checkpoints/
