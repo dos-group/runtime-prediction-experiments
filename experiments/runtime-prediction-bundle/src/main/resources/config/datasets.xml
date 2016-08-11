@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.springframework.org/schema/beans"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <!--************************************************************************
+    * Data Generators
+    *************************************************************************-->
+
+    <!--************************************************************************
+    * Data Sets
+    *************************************************************************-->
+
+    <bean id="dataset.twitter-rv" class="org.peelframework.core.beans.data.CopiedDataSet">
+        <constructor-arg name="src" value="${app.path.datasets}/twitter_rv.net"/>
+        <constructor-arg name="dst" value="${system.hadoop-2.path.input}/edges"/>
+        <constructor-arg name="fs" ref="hdfs-2.7.1"/>
+    </bean>
+
+    <bean id="dataset.webgraph-uk-2007-05" class="org.peelframework.core.beans.data.CopiedDataSet">
+        <constructor-arg name="src" value="${app.path.datasets}/webgraph-uk-2007-05.txt"/>
+        <constructor-arg name="dst" value="${system.hadoop-2.path.input}/edges"/>
+        <constructor-arg name="fs" ref="hdfs-2.7.1"/>
+    </bean>
+
+    <bean id="dataset.BDB-Graph-25" class="org.peelframework.core.beans.data.CopiedDataSet">
+        <constructor-arg name="src" value="${app.path.datasets}/BigDataBench/BigDataBench_V3.1.5_Spark/SearchEngine/Pagerank/data-PageRank/Google_genGraph_25.txt"/>
+        <constructor-arg name="dst" value="${system.hadoop-2.path.input}/edges"/>
+        <constructor-arg name="fs" ref="hdfs-2.7.1"/>
+    </bean>
+
+    <bean id="dataset.BDB-Graph-26" class="org.peelframework.core.beans.data.CopiedDataSet">
+        <constructor-arg name="src" value="${app.path.datasets}/BigDataBench/BigDataBench_V3.1.5_Spark/SearchEngine/Pagerank/data-PageRank/Google_genGraph_26.txt"/>
+        <constructor-arg name="dst" value="${system.hadoop-2.path.input}/edges"/>
+        <constructor-arg name="fs" ref="hdfs-2.7.1"/>
+    </bean>
+
+    <bean id="dataset.BDB-Graph-27" class="org.peelframework.core.beans.data.CopiedDataSet">
+        <constructor-arg name="src" value="${app.path.datasets}/BigDataBench/BigDataBench_V3.1.5_Spark/SearchEngine/Pagerank/data-PageRank/Google_genGraph_27.txt"/>
+        <constructor-arg name="dst" value="${system.hadoop-2.path.input}/edges"/>
+        <constructor-arg name="fs" ref="hdfs-2.7.1"/>
+    </bean>
+
+</beans>

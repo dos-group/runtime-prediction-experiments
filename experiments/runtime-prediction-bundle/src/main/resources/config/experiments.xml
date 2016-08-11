@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+                           http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd">
+
+    <context:annotation-config/>
+
+    <!-- Scan for annotated Peel components in the 'de.tuberlin.cit.experiments.prediction' package -->
+    <context:component-scan base-package="de.tuberlin.cit.experiments.prediction"/>
+
+    <!-- Peel configurations -->
+    <import resource="classpath:peel-core.xml"/>
+    <import resource="classpath:peel-extensions.xml"/>
+    <import resource="classpath:my-peel-extensions.xml"/>
+
+    <!-- custom system beans -->
+    <import resource="systems.xml"/>
+
+    <!-- shared datasets and generators -->
+    <import resource="datasets.xml"/>
+
+    <!-- experiment beans -->
+    <import resource="experiments.tpc.xml"/>
+    <import resource="experiments.sgd.xml"/>
+    <import resource="experiments.kmeans.xml"/>
+    <import resource="experiments.connected-components.xml"/>
+    <import resource="experiments.page-rank.xml"/>
+
+</beans>

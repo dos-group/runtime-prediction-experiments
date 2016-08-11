@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.springframework.org/schema/beans"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <!--************************************************************************
+    * Data Generators
+    *************************************************************************-->
+
+    <bean id="datagen.kmeans" class="org.peelframework.flink.beans.job.FlinkJob">
+        <constructor-arg name="runner" ref="flink-1.0.0"/>
+        <constructor-arg name="command">
+            <value><![CDATA[
+              -v -c de.tuberlin.cit.experiments.prediction.datagen.flink.kmeans.KMeansDataGeneratorJob        \
+              ${app.path.datagens}/runtime-prediction-datagens-1.0-SNAPSHOT.jar        \
+              --points ${datagen.kmeans.points}                                           \
+              -k ${datagen.kmeans.centers}                           \
+              --output ${system.hadoop-2.path.input}
+            ]]>
+            </value>
+        </constructor-arg>
+        <constructor-arg name="timeout"><value>3600</value></constructor-arg>
+    </bean>
+
+    <!--************************************************************************
+    * Data Sets
+    *************************************************************************-->
+
+    <bean id="dataset.kmeans.generated.points" class="org.peelframework.core.beans.data.GeneratedDataSet">
+        <constructor-arg name="src" ref="datagen.kmeans"/>
+        <constructor-arg name="dst" value="${system.hadoop-2.path.input}/points"/>
+        <constructor-arg name="fs" ref="hdfs-2.7.1"/>
+    </bean>
+
+    <bean id="dataset.kmeans.generated.centers" class="org.peelframework.core.beans.data.GeneratedDataSet">
+        <constructor-arg name="src" ref="datagen.kmeans"/>
+        <constructor-arg name="dst" value="${system.hadoop-2.path.input}/centers"/>
+        <constructor-arg name="fs" ref="hdfs-2.7.1"/>
+    </bean>
+
+    <!--************************************************************************
+    * Outputs
+    *************************************************************************-->
+
+    <bean id="kmeans.output" class="org.peelframework.core.beans.data.ExperimentOutput">
+        <constructor-arg name="path" value="${system.hadoop-2.path.output}/kmeans"/>
+        <constructor-arg name="fs" ref="hdfs-2.7.1"/>
+    </bean>
+
+    <!--************************************************************************
+    * Experiments
+    *************************************************************************-->
+
+    <bean id="experiment.flink.kmeans" parent="experiment.flink-1.0.0" abstract="true">
+        <constructor-arg name="command">
+            <value><![CDATA[
+              -v -c de.tuberlin.cit.experiments.prediction.flink.KMeans                    \
+              ${app.path.apps}/runtime-prediction-flink-jobs-1.0-SNAPSHOT.jar          \
+              ${system.hadoop-2.path.input}/points                            \
+              ${system.hadoop-2.path.input}/centers                            \
+              ${system.hadoop-2.path.output}/kmeans \
+              ${numIterations}
+            ]]></value>
+        </constructor-arg>
+        <constructor-arg name="outputs">
+            <set value-type="org.peelframework.core.beans.data.ExperimentOutput">
+                <ref bean="kmeans.output"/>
+            </set>
+        </constructor-arg>
+    </bean>
+
+    <!--************************************************************************
+    * Suites
+    *************************************************************************-->
+
+    <bean id="suite.flink.kmeans.test" class="org.peelframework.core.beans.experiment.ExperimentSuite">
+        <constructor-arg name="experiments">
+            <list value-type="org.peelframework.core.beans.experiment.Experiment">
+                <bean parent="experiment.flink.kmeans">
+                    <constructor-arg name="name" value="flink.kmeans"/>
+                    <constructor-arg name="inputs">
+                        <set>
+                            <ref bean="dataset.kmeans.generated.points" />
+                            <ref bean="dataset.kmeans.generated.centers" />
+                        </set>
+                    </constructor-arg>
+                    <constructor-arg name="config"> <!-- 1 GB points data -->
+                        <value><![CDATA[
+                                  datagen.kmeans.points = 84331253
+                                  datagen.kmeans.centers = 10
+                                  numIterations = 10
+                                  system.default.config.slaves              = ${env.slaves.all.hosts}
+                                  system.default.config.parallelism.total   = ${env.slaves.all.total.parallelism}
+                                ]]></value>
+                    </constructor-arg>
+                </bean>
+            </list>
+        </constructor-arg>
+    </bean>
+
+    <!-- suite for cluster testing of kmeans with ExperimentSequence.CrossedParameters -->
+    <bean id="suite.flink.kmeans.scaleout" class="org.peelframework.core.beans.experiment.ExperimentSuite">
+        <constructor-arg name="experiments">
+            <bean class="org.peelframework.core.beans.experiment.ExperimentSequence">
+                <constructor-arg name="parameters">
+                    <bean class="org.peelframework.core.beans.experiment.ExperimentSequence.CrossedParameters">
+                        <constructor-arg name="parameters">
+                            <list>
+                                <bean class="org.peelframework.core.beans.experiment.ExperimentSequence.Parameter">
+                                    <constructor-arg name="name" value="numberOfPoints" />
+                                    <constructor-arg name="vals">
+                                        <list>
+                                            <!--<value>50000</value>--> <!-- setup test-->
+                                            <!--<value>421656265</value>-->  <!-- 5 GB -->
+                                            <!--<value>843312530</value>--> <!-- 10 GB -->
+                                            <!--<value>1686625060</value>--> <!-- 20 GB -->
+                                            <value>4216562650</value> <!-- 50 GB -->
+                                        </list>
+                                    </constructor-arg>
+                                </bean>
+                                <bean class="org.peelframework.core.beans.experiment.ExperimentSequence.Parameter">
+                                    <constructor-arg name="name" value="topXXX" />
+                                    <constructor-arg name="vals">
+                                        <list>
+                                            <value>top004</value>
+                                            <value>top008</value>
+                                            <value>top012</value>
+                                            <value>top016</value>
+                                            <value>top020</value>
+                                            <value>top024</value>
+                                            <value>top028</value>
+                                            <value>top032</value>
+                                            <value>top036</value>
+                                            <value>top040</value>
+                                            <value>top044</value>
+                                            <value>top048</value>
+                                            <value>top052</value>
+                                            <value>top056</value>
+                                            <value>top060</value>
+                                        </list>
+                                    </constructor-arg>
+                                </bean>
+                            </list>
+                        </constructor-arg>
+                    </bean>
+                </constructor-arg>
+                <constructor-arg name="prototypes">
+                    <list value-type="org.peelframework.core.beans.experiment.Experiment">
+                        <bean parent="experiment.flink.kmeans">
+                            <constructor-arg name="name" value="flink.kmeans.__numberOfPoints__points.__topXXX__"/>
+                            <constructor-arg name="inputs">
+                                <set>
+                                    <ref bean="dataset.kmeans.generated.points" />
+                                    <ref bean="dataset.kmeans.generated.centers"/>
+                                </set>
+                            </constructor-arg>
+                            <constructor-arg name="config">
+                                <value><![CDATA[
+                                  system.default.config.slaves              = ${env.slaves.__topXXX__.hosts}
+                                  system.default.config.parallelism.total   = ${env.slaves.__topXXX__.total.parallelism}
+                                  datagen.kmeans.points                     = __numberOfPoints__
+                                  datagen.kmeans.centers                    = 5
+                                  numIterations                             = 10
+                                ]]></value>
+                            </constructor-arg>
+                        </bean>
+                    </list>
+                </constructor-arg>
+            </bean>
+        </constructor-arg>
+    </bean>
+
+</beans>
