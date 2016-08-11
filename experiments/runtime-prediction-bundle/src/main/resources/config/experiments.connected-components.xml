@@ -24,7 +24,7 @@
     * Experiments
     *************************************************************************-->
 
-    <bean id="experiment.flink.connectedComponents" parent="experiment.flink-1.0.0" abstract="true">
+    <bean id="experiment.flink.connectedComponents" parent="experiment.flink-1.0.3" abstract="true">
         <constructor-arg name="command">
             <value><![CDATA[
               -v -c de.tuberlin.cit.experiments.prediction.flink.ConnectedComponentsDelta   \
@@ -41,7 +41,7 @@
         </constructor-arg>
     </bean>
 
-    <bean id="experiment.spark.connectedComponent" parent="experiment.spark-1.6.0" abstract="true">
+    <bean id="experiment.spark.connectedComponent" parent="experiment.spark-2.0.0" abstract="true">
         <constructor-arg name="command">
             <value><![CDATA[
               --class de.tuberlin.cit.experiments.prediction.spark.ConnectedComponent   \
@@ -66,6 +66,7 @@
             <list value-type="org.peelframework.core.beans.experiment.Experiment">
                 <bean parent="experiment.flink.connectedComponents">
                     <constructor-arg name="name" value="flink.connectedComponents.flink.twitter-rv"/>
+                    <constructor-arg name="runs" value="1"/>
                     <constructor-arg name="inputs">
                         <set><ref bean="dataset.twitter-rv" /></set>
                     </constructor-arg>
@@ -87,6 +88,7 @@
             <list value-type="org.peelframework.core.beans.experiment.Experiment">
                 <bean parent="experiment.flink.connectedComponents">
                     <constructor-arg name="name" value="flink.connectedComponents.webgraph-uk-2007-05"/>
+                    <constructor-arg name="runs" value="1"/>
                     <constructor-arg name="inputs">
                         <set><ref bean="dataset.webgraph-uk-2007-05" /></set>
                     </constructor-arg>

@@ -24,7 +24,7 @@
     * Experiments
     *************************************************************************-->
 
-    <bean id="experiment.flink.pageRank" parent="experiment.flink-1.0.0" abstract="true">
+    <bean id="experiment.flink.pageRank" parent="experiment.flink-1.0.3" abstract="true">
         <constructor-arg name="command">
             <value><![CDATA[
               -v -c de.tuberlin.cit.experiments.prediction.flink.PageRankDelta \
@@ -42,7 +42,7 @@
         </constructor-arg>
     </bean>
 
-    <bean id="experiment.spark.pageRank" parent="experiment.spark-1.6.0" abstract="true">
+    <bean id="experiment.spark.pageRank" parent="experiment.spark-2.0.0" abstract="true">
         <constructor-arg name="command">
             <value><![CDATA[
               --class de.tuberlin.cit.experiments.prediction.spark.BDBSparkPageRank        \
@@ -70,6 +70,7 @@
             <list value-type="org.peelframework.core.beans.experiment.Experiment">
                 <bean parent="experiment.flink.pageRank">
                     <constructor-arg name="name" value="flink.pageRank.twitter-rv"/>
+                    <constructor-arg name="runs" value="1"/>
                     <constructor-arg name="inputs">
                         <set><ref bean="dataset.twitter-rv" /></set>
                     </constructor-arg>
@@ -147,7 +148,6 @@
                     <list value-type="org.peelframework.core.beans.experiment.Experiment">
                         <bean parent="experiment.flink.pageRank">
                             <constructor-arg name="name" value="flink.pageRank.twitter-rv.__topXXX__"/>
-                            <constructor-arg name="runs" value="1"/>
                             <constructor-arg name="inputs">
                                 <set><ref bean="dataset.twitter-rv" /></set>
                             </constructor-arg>
@@ -206,7 +206,6 @@
                     <list value-type="org.peelframework.core.beans.experiment.Experiment">
                         <bean parent="experiment.spark.pageRank">
                             <constructor-arg name="name" value="spark.pageRank.BDB-Graph-25.__topXXX__"/>
-                            <constructor-arg name="runs" value="5"/>
                             <constructor-arg name="inputs">
                                 <set><ref bean="dataset.BDB-Graph-25" /></set>
                             </constructor-arg>

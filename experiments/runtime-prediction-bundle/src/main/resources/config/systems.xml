@@ -15,9 +15,9 @@
     * Overridden system beans
     *************************************************************************-->
 
-    <!-- Flink (overridden 'flink-1.0.0' bean that depends on 'hdfs-2.7.1' and 'dstat-0.7.2') -->
-    <bean id="flink-1.0.0" class="org.peelframework.flink.beans.system.Flink" parent="system">
-        <constructor-arg name="version" value="1.0.0"/>
+    <!-- Flink (overridden 'flink-1.0.3' bean that depends on 'hdfs-2.7.1' and 'dstat-0.7.2') -->
+    <bean id="flink-1.0.3" class="org.peelframework.flink.beans.system.Flink" parent="system">
+        <constructor-arg name="version" value="1.0.3"/>
         <constructor-arg name="configKey" value="flink" />
         <constructor-arg name="lifespan" value="EXPERIMENT"/>
         <constructor-arg name="dependencies">
@@ -29,8 +29,8 @@
     </bean>
 
     <!-- Spark (overridden 'spark-1.6.0' bean that depends on 'hdfs-2.7.1' and 'dstat-0.7.2') -->
-    <bean id="spark-1.6.0" class="org.peelframework.spark.beans.system.Spark" parent="system">
-        <constructor-arg name="version" value="1.6.0"/>
+    <bean id="spark-2.0.0" class="org.peelframework.spark.beans.system.Spark" parent="system">
+        <constructor-arg name="version" value="2.0.0"/>
         <constructor-arg name="configKey" value="spark" />
         <constructor-arg name="lifespan" value="EXPERIMENT"/>
         <constructor-arg name="dependencies">
@@ -45,14 +45,14 @@
     * Base experiments beans
     *************************************************************************-->
 
-    <bean id="experiment.flink-1.0.0" class="org.peelframework.flink.beans.experiment.FlinkExperiment" abstract="true">
-        <constructor-arg name="runner" ref="flink-1.0.0"/>
-        <constructor-arg name="runs" value="5"/>
+    <bean id="experiment.flink-1.0.3" class="org.peelframework.flink.beans.experiment.FlinkExperiment" abstract="true">
+        <constructor-arg name="runner" ref="flink-1.0.3"/>
+        <constructor-arg name="runs" value="7"/>
     </bean>
 
-    <bean id="experiment.spark-1.6.0" class="org.peelframework.spark.beans.experiment.SparkExperiment" abstract="true">
-        <constructor-arg name="runner" ref="spark-1.6.0"/>
-        <constructor-arg name="runs" value="5"/>
+    <bean id="experiment.spark-2.0.0" class="org.peelframework.spark.beans.experiment.SparkExperiment" abstract="true">
+        <constructor-arg name="runner" ref="spark-2.0.0"/>
+        <constructor-arg name="runs" value="7"/>
     </bean>
 
 </beans>
