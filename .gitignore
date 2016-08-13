@@ -1,3 +1,6 @@
+# parsed results folder
+results/
+
 *.iml
 .idea/
 
