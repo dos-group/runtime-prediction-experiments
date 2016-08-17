@@ -41,7 +41,7 @@
         </constructor-arg>
     </bean>
 
-    <bean id="experiment.spark.connectedComponent" parent="experiment.spark-2.0.0" abstract="true">
+    <bean id="experiment.spark.connectedComponents" parent="experiment.spark-2.0.0" abstract="true">
         <constructor-arg name="command">
             <value><![CDATA[
               --class de.tuberlin.cit.experiments.prediction.spark.ConnectedComponent   \
@@ -109,7 +109,7 @@
         <constructor-arg name="experiments">
             <list value-type="org.peelframework.core.beans.experiment.Experiment">
 
-                <bean parent="experiment.spark.connectedComponent">
+                <bean parent="experiment.spark.connectedComponents">
                     <constructor-arg name="name" value="spark.connectedComponents.BDB-Graph-25"/>
                     <constructor-arg name="runs" value="1"/>
                     <constructor-arg name="inputs">
@@ -122,7 +122,27 @@
                                 ]]></value>
                     </constructor-arg>
                 </bean>
+            </list>
+        </constructor-arg>
+    </bean>
 
+    <bean id="suite.spark.connectedComponents.test.twitter-rv" class="org.peelframework.core.beans.experiment.ExperimentSuite">
+        <constructor-arg name="experiments">
+            <list value-type="org.peelframework.core.beans.experiment.Experiment">
+
+                <bean parent="experiment.spark.connectedComponents">
+                    <constructor-arg name="name" value="spark.connectedComponents.twitter-rv"/>
+                    <constructor-arg name="runs" value="1"/>
+                    <constructor-arg name="inputs">
+                        <set><ref bean="dataset.twitter-rv" /></set>
+                    </constructor-arg>
+                    <constructor-arg name="config">
+                        <value><![CDATA[
+                                  system.default.config.slaves              = ${env.slaves.top020.hosts}
+                                  system.default.config.parallelism.total   = ${env.slaves.top020.total.parallelism}
+                                ]]></value>
+                    </constructor-arg>
+                </bean>
             </list>
         </constructor-arg>
     </bean>
@@ -202,7 +222,7 @@
                 </constructor-arg>
                 <constructor-arg name="prototypes">
                     <list value-type="org.peelframework.core.beans.experiment.Experiment">
-                        <bean parent="experiment.flink.connectedComponents">
+                        <bean parent="experiment.spark.connectedComponents">
                             <constructor-arg name="name" value="spark.connectedComponents.BDB-Graph-25.__topXXX__" />
                             <constructor-arg name="inputs">
                                 <set>
