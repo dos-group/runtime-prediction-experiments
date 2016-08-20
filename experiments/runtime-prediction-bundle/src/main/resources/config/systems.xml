@@ -28,7 +28,7 @@
         </constructor-arg>
     </bean>
 
-    <!-- Spark (overridden 'spark-1.6.0' bean that depends on 'hdfs-2.7.1' and 'dstat-0.7.2') -->
+    <!-- Spark (overridden 'spark-2.0.0' bean that depends on 'hdfs-2.7.1' and 'dstat-0.7.2') -->
     <bean id="spark-2.0.0" class="org.peelframework.spark.beans.system.Spark" parent="system">
         <constructor-arg name="version" value="2.0.0"/>
         <constructor-arg name="configKey" value="spark" />

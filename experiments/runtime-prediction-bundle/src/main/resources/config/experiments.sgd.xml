@@ -11,7 +11,7 @@
     <constructor-arg name="runner" ref="flink-1.0.3" />
     <constructor-arg name="command">
       <value><![CDATA[
-        -v -c de.tuberlin.cit.experiments.prediction.datagen.flink.sgd.DataSetGenerator \
+        -v -c de.tuberlin.cit.experiments.prediction.datagen.FeatureDataSetGenerator \
         ${app.path.datagens}/runtime-prediction-datagens-1.0-SNAPSHOT.jar \
         ${datagen.sgd.points} \
         ${datagen.sgd.dimension} \
@@ -31,6 +31,12 @@
     <constructor-arg name="fs" ref="hdfs-2.7.1" />
   </bean>
 
+  <!--<bean id="dataset.sgd.copied" class="org.peelframework.core.beans.data.CopiedDataSet">-->
+    <!--<constructor-arg name="src" value="${app.path.datasets}/sgd-input.generated"/>-->
+    <!--<constructor-arg name="dst" value="${system.hadoop-2.path.input}/sgd-input"/>-->
+    <!--<constructor-arg name="fs" ref="hdfs-2.7.1"/>-->
+  <!--</bean>-->
+
   <!--************************************************************************
   * Outputs
   *************************************************************************-->
@@ -45,52 +51,65 @@
   * Experiments
   *************************************************************************-->
 
-  <!-- connected components experiment -->
-  <bean id="experiment.flink.sgd" parent="experiment.flink-1.0.3" abstract="true">
-    <constructor-arg name="command">
-      <value><![CDATA[
+    <bean id="experiment.flink.sgd" parent="experiment.flink-1.0.3" abstract="true">
+        <constructor-arg name="command">
+            <value><![CDATA[
         -v -c de.tuberlin.cit.experiments.prediction.flink.SGD \
         ${app.path.apps}/runtime-prediction-flink-jobs-1.0-SNAPSHOT.jar \
         ${system.hadoop-2.path.input}/sgd-input \
         ${system.hadoop-2.path.output}/sgd-output
       ]]></value>
-    </constructor-arg>
-    <constructor-arg name="outputs">
-      <set value-type="org.peelframework.core.beans.data.ExperimentOutput">
-        <ref bean="sgd.output" />
-      </set>
-    </constructor-arg>
-  </bean>
+        </constructor-arg>
+        <constructor-arg name="outputs">
+            <set value-type="org.peelframework.core.beans.data.ExperimentOutput">
+                <ref bean="sgd.output" />
+            </set>
+        </constructor-arg>
+    </bean>
+
+    <bean id="experiment.spark.sgd" parent="experiment.spark-2.0.0" abstract="true">
+        <constructor-arg name="command">
+            <value><![CDATA[
+              --class de.tuberlin.cit.experiments.prediction.spark.LinearRegression \
+              ${app.path.apps}/runtime-prediction-spark-jobs-1.0-SNAPSHOT.jar       \
+              ${system.hadoop-2.path.input}/sgd-input
+      ]]></value>
+        </constructor-arg>
+        <constructor-arg name="outputs">
+            <set value-type="org.peelframework.core.beans.data.ExperimentOutput">
+                <ref bean="sgd.output" />
+            </set>
+        </constructor-arg>
+    </bean>
 
   <!--************************************************************************
   * Suites
   *************************************************************************-->
 
-  <!-- suite for local development and testing -->
-  <bean id="suite.flink.sgd.test" class="org.peelframework.core.beans.experiment.ExperimentSuite">
-    <constructor-arg name="experiments">
-      <list value-type="org.peelframework.core.beans.experiment.Experiment">
-        <bean parent="experiment.flink.sgd">
-          <constructor-arg name="name" value="flink.sgd" />
-            <constructor-arg name="runs" value="1"/>
-          <constructor-arg name="inputs">
-            <set>
-              <ref bean="dataset.sgd" />
-            </set>
-          </constructor-arg>
-          <constructor-arg name="config">
-            <value><![CDATA[
-              datagen.sgd.points    = 100
-              datagen.sgd.dimension = 10
-            ]]></value>
-          </constructor-arg>
-        </bean>
-      </list>
-    </constructor-arg>
+  <bean id="suite.spark.sgd.test" class="org.peelframework.core.beans.experiment.ExperimentSuite">
+      <constructor-arg name="experiments">
+          <list value-type="org.peelframework.core.beans.experiment.Experiment">
+              <bean parent="experiment.spark.sgd">
+                  <constructor-arg name="name" value="spark.sgd" />
+                  <constructor-arg name="runs" value="1"/>
+                  <constructor-arg name="inputs">
+                      <set><ref bean="dataset.sgd" /></set>
+                  </constructor-arg>
+                  <constructor-arg name="config">
+                      <value><![CDATA[
+                                datagen.sgd.points                      = 20000000
+                                datagen.sgd.dimension                   = 20
+                                system.default.config.slaves            = ${env.slaves.top020.hosts}
+                                system.default.config.parallelism.total = ${env.slaves.top020.total.parallelism}
+                               ]]></value>
+                  </constructor-arg>
+              </bean>
+          </list>
+      </constructor-arg>
   </bean>
 
   <!-- suite for cluster -->
-  <bean id="suite.flink.sgd.scaleout" class="org.peelframework.core.beans.experiment.ExperimentSuite">
+  <bean id="suite.spark.sgd.scaleout" class="org.peelframework.core.beans.experiment.ExperimentSuite">
     <constructor-arg name="experiments">
       <bean class="org.peelframework.core.beans.experiment.ExperimentSequence">
         <constructor-arg name="parameters">
@@ -98,18 +117,13 @@
             <constructor-arg name="parameters">
               <list>
                 <bean class="org.peelframework.core.beans.experiment.ExperimentSequence.Parameter">
-                  <constructor-arg name="name" value="numberOfPoints" />
-                  <constructor-arg name="vals">
-                    <list>
-                      <value>20000000</value>
-                      <!--<value>40000000</value>-->
-                    </list>
-                  </constructor-arg>
-                </bean>
-                <bean class="org.peelframework.core.beans.experiment.ExperimentSequence.Parameter">
                   <constructor-arg name="name" value="topXXX" />
                   <constructor-arg name="vals">
                     <list>
+                      <value>top004</value>
+                      <value>top008</value>
+                      <value>top012</value>
+                      <value>top016</value>
                       <value>top020</value>
                       <value>top024</value>
                       <value>top028</value>
@@ -131,8 +145,8 @@
 
         <constructor-arg name="prototypes">
           <list value-type="org.peelframework.core.beans.experiment.Experiment">
-            <bean parent="experiment.flink.sgd">
-              <constructor-arg name="name" value="flink.sgd.__numberOfPoints__.__topXXX__" />
+            <bean parent="experiment.spark.sgd">
+              <constructor-arg name="name" value="spark.sgd.__topXXX__" />
               <constructor-arg name="inputs">
                 <set>
                   <ref bean="dataset.sgd" />
@@ -140,11 +154,11 @@
               </constructor-arg>
               <constructor-arg name="config">
                 <value><![CDATA[
-                  system.default.config.slaves            = ${env.slaves.__topXXX__.hosts}
-                  system.default.config.parallelism.total = ${env.slaves.__topXXX__.total.parallelism}
-                  datagen.sgd.points                      = __numberOfPoints__
-                  datagen.sgd.dimension                   = 20
-                ]]></value>
+                          system.default.config.slaves            = ${env.slaves.__topXXX__.hosts}
+                          system.default.config.parallelism.total = ${env.slaves.__topXXX__.total.parallelism}
+                          datagen.sgd.points                      = 20000000
+                          datagen.sgd.dimension                   = 20
+                         ]]></value>
               </constructor-arg>
             </bean>
           </list>
