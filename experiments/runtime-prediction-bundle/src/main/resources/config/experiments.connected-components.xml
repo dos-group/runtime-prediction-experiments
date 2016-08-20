@@ -50,9 +50,7 @@
             ]]></value>
         </constructor-arg>
         <constructor-arg name="outputs">
-            <set value-type="org.peelframework.core.beans.data.ExperimentOutput">
-                <ref bean="pageRank.output"/>
-            </set>
+            <set value-type="org.peelframework.core.beans.data.ExperimentOutput"></set>
         </constructor-arg>
     </bean>
 
@@ -147,8 +145,7 @@
         </constructor-arg>
     </bean>
 
-    <!-- cluster suite with webgraph-uk-2007-05 dataset using Flink -->
-    <bean id="suite.flink.connectedComponents.scaleout.webgraph-uk-2007-05" class="org.peelframework.core.beans.experiment.ExperimentSuite">
+    <bean id="suite.flink.connectedComponents.scaleout.twitter-rv" class="org.peelframework.core.beans.experiment.ExperimentSuite">
         <constructor-arg name="experiments">
             <bean class="org.peelframework.core.beans.experiment.ExperimentSequence">
                 <constructor-arg name="paramName" value="topXXX" />
@@ -177,7 +174,7 @@
                             <constructor-arg name="name" value="flink.connectedComponents.webgraph-uk-2007-05.__topXXX__" />
                             <constructor-arg name="inputs">
                                 <set>
-                                    <ref bean="dataset.webgraph-uk-2007-05" />
+                                    <ref bean="dataset.twitter-rv" />
                                 </set>
                             </constructor-arg>
                             <constructor-arg name="config">
@@ -185,8 +182,6 @@
                                   numIterations                           = 10
                                   system.default.config.slaves            = ${env.slaves.__topXXX__.hosts}
                                   system.default.config.parallelism.total = ${env.slaves.__topXXX__.total.parallelism}
-                                  dataset.cc.vertices.count               = 105896555
-                                  dataset.cc.vertices.shift               = 0
                                 ]]></value>
                             </constructor-arg>
                         </bean>
@@ -196,7 +191,6 @@
         </constructor-arg>
     </bean>
 
-    <!-- cluster suite with webgraph-uk-2007-05 dataset using Flink -->
     <bean id="suite.spark.connectedComponents.scaleout.BDB-Graph-25" class="org.peelframework.core.beans.experiment.ExperimentSuite">
         <constructor-arg name="experiments">
             <bean class="org.peelframework.core.beans.experiment.ExperimentSequence">
@@ -234,8 +228,6 @@
                                   numIterations                           = 10
                                   system.default.config.slaves            = ${env.slaves.__topXXX__.hosts}
                                   system.default.config.parallelism.total = ${env.slaves.__topXXX__.total.parallelism}
-                                  dataset.cc.vertices.count               = 105896555
-                                  dataset.cc.vertices.shift               = 0
                                 ]]></value>
                             </constructor-arg>
                         </bean>

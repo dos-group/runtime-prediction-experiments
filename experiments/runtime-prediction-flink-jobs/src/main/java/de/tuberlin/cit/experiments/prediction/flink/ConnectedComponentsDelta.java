@@ -112,7 +112,7 @@ public class ConnectedComponentsDelta extends AbstractConnectedComponents implem
 
 		// execute program
 		try {
-			JobExecutionResult jobResult = env.execute("Page Rank Iteration with Deltas");
+			JobExecutionResult jobResult = env.execute("Connected Components with DeltaIterations");
 			AccumulatorUtils.dumpAccumulators(jobResult);
 
 		} catch (Exception e) {
