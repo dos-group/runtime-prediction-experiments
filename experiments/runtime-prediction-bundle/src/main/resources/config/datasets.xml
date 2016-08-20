@@ -41,4 +41,16 @@
         <constructor-arg name="fs" ref="hdfs-2.7.1"/>
     </bean>
 
+    <bean id="dataset.BDB-Wiki-50" class="org.peelframework.core.beans.data.CopiedDataSet">
+        <constructor-arg name="src" value="${app.path.datasets}/BigDataBench/BigDataBench_V3.1.5_Spark/MicroBenchmarks/data-MicroBenchmarks-50GB"/>
+        <constructor-arg name="dst" value="${system.hadoop-2.path.input}/wiki"/>
+        <constructor-arg name="fs" ref="hdfs-2.7.1"/>
+    </bean>
+
+    <bean id="dataset.BDB-Wiki-250" class="org.peelframework.core.beans.data.CopiedDataSet">
+        <constructor-arg name="src" value="${app.path.datasets}/BigDataBench/BigDataBench_V3.1.5_Spark/MicroBenchmarks/data-MicroBenchmarks-250GB"/>
+        <constructor-arg name="dst" value="${system.hadoop-2.path.input}/wiki"/>
+        <constructor-arg name="fs" ref="hdfs-2.7.1"/>
+    </bean>
+
 </beans>
