@@ -41,6 +41,41 @@
         </constructor-arg>
     </bean>
 
+    <bean id="experiment.flink.connectedComponentsGelly" parent="experiment.flink-1.0.3" abstract="true">
+        <constructor-arg name="command">
+            <value><![CDATA[
+              -v -c de.tuberlin.cit.experiments.prediction.flink.ConnectedComponentsGelly   \
+              ${app.path.apps}/runtime-prediction-flink-jobs-1.0-SNAPSHOT.jar               \
+              ${system.hadoop-2.path.input}/edges                                           \
+              ${system.hadoop-2.path.output}/cc-output                                      \
+              ${numIterations}
+            ]]></value>
+        </constructor-arg>
+        <constructor-arg name="outputs">
+            <set value-type="org.peelframework.core.beans.data.ExperimentOutput">
+                <ref bean="connectedComponents.output"/>
+            </set>
+        </constructor-arg>
+    </bean>
+
+    <bean id="experiment.flink.connectedComponentsMultiJob" parent="experiment.flink-1.0.3" abstract="true">
+        <constructor-arg name="command">
+            <value><![CDATA[
+              -v -c de.tuberlin.cit.experiments.prediction.flink.ConnectedComponentsMultiJob   \
+              ${app.path.apps}/runtime-prediction-flink-jobs-1.0-SNAPSHOT.jar                  \
+              ${system.hadoop-2.path.input}/edges                                              \
+              ${system.hadoop-2.path.output}/cc-output                                         \
+              ${numIterations}                                                                 \
+              ${system.hadoop-2.path.output}/intermediate-results
+            ]]></value>
+        </constructor-arg>
+        <constructor-arg name="outputs">
+            <set value-type="org.peelframework.core.beans.data.ExperimentOutput">
+                <ref bean="connectedComponents.output"/>
+            </set>
+        </constructor-arg>
+    </bean>
+
     <bean id="experiment.spark.connectedComponents" parent="experiment.spark-2.0.0" abstract="true">
         <constructor-arg name="command">
             <value><![CDATA[
@@ -171,10 +206,194 @@
                 <constructor-arg name="prototypes">
                     <list value-type="org.peelframework.core.beans.experiment.Experiment">
                         <bean parent="experiment.flink.connectedComponents">
-                            <constructor-arg name="name" value="flink.connectedComponents.webgraph-uk-2007-05.__topXXX__" />
+                            <constructor-arg name="name" value="flink.connectedComponents.twitter-rv.__topXXX__" />
                             <constructor-arg name="inputs">
                                 <set>
                                     <ref bean="dataset.twitter-rv" />
+                                </set>
+                            </constructor-arg>
+                            <constructor-arg name="config">
+                                <value><![CDATA[
+                                  numIterations                           = 10
+                                  system.default.config.slaves            = ${env.slaves.__topXXX__.hosts}
+                                  system.default.config.parallelism.total = ${env.slaves.__topXXX__.total.parallelism}
+                                ]]></value>
+                            </constructor-arg>
+                        </bean>
+                    </list>
+                </constructor-arg>
+            </bean>
+        </constructor-arg>
+    </bean>
+
+    <bean id="suite.flink.connectedComponentsMultiJob.scaleout.twitter-rv" class="org.peelframework.core.beans.experiment.ExperimentSuite">
+        <constructor-arg name="experiments">
+            <bean class="org.peelframework.core.beans.experiment.ExperimentSequence">
+                <constructor-arg name="paramName" value="topXXX" />
+                <constructor-arg name="paramVals">
+                    <list>
+                        <!--<value>top004</value>-->
+                        <!--<value>top008</value>-->
+                        <!--<value>top012</value>-->
+                        <value>top016</value>
+                        <value>top020</value>
+                        <value>top024</value>
+                        <value>top028</value>
+                        <value>top032</value>
+                        <!--<value>top036</value>-->
+                        <!--<value>top040</value>-->
+                        <!--<value>top044</value>-->
+                        <!--<value>top048</value>-->
+                        <!--<value>top052</value>-->
+                        <!--<value>top056</value>-->
+                        <!--<value>top060</value>-->
+                    </list>
+                </constructor-arg>
+                <constructor-arg name="prototypes">
+                    <list value-type="org.peelframework.core.beans.experiment.Experiment">
+                        <bean parent="experiment.flink.connectedComponentsMultiJob">
+                            <constructor-arg name="name" value="flink.connectedComponents.twitter-rv.__topXXX__" />
+                            <constructor-arg name="inputs">
+                                <set>
+                                    <ref bean="dataset.twitter-rv" />
+                                </set>
+                            </constructor-arg>
+                            <constructor-arg name="config">
+                                <value><![CDATA[
+                                  numIterations                           = 10
+                                  system.default.config.slaves            = ${env.slaves.__topXXX__.hosts}
+                                  system.default.config.parallelism.total = ${env.slaves.__topXXX__.total.parallelism}
+                                ]]></value>
+                            </constructor-arg>
+                        </bean>
+                    </list>
+                </constructor-arg>
+            </bean>
+        </constructor-arg>
+    </bean>
+
+    <bean id="suite.flink.connectedComponentsGelly.scaleout.twitter-rv" class="org.peelframework.core.beans.experiment.ExperimentSuite">
+        <constructor-arg name="experiments">
+            <bean class="org.peelframework.core.beans.experiment.ExperimentSequence">
+                <constructor-arg name="paramName" value="topXXX" />
+                <constructor-arg name="paramVals">
+                    <list>
+                        <!--<value>top004</value>-->
+                        <!--<value>top008</value>-->
+                        <!--<value>top012</value>-->
+                        <value>top016</value>
+                        <value>top020</value>
+                        <value>top024</value>
+                        <value>top028</value>
+                        <value>top032</value>
+                        <!--<value>top036</value>-->
+                        <!--<value>top040</value>-->
+                        <!--<value>top044</value>-->
+                        <!--<value>top048</value>-->
+                        <!--<value>top052</value>-->
+                        <!--<value>top056</value>-->
+                        <!--<value>top060</value>-->
+                    </list>
+                </constructor-arg>
+                <constructor-arg name="prototypes">
+                    <list value-type="org.peelframework.core.beans.experiment.Experiment">
+                        <bean parent="experiment.flink.connectedComponentsGelly">
+                            <constructor-arg name="name" value="flink.connectedComponents.twitter-rv.__topXXX__" />
+                            <constructor-arg name="inputs">
+                                <set>
+                                    <ref bean="dataset.twitter-rv" />
+                                </set>
+                            </constructor-arg>
+                            <constructor-arg name="config">
+                                <value><![CDATA[
+                                  numIterations                           = 10
+                                  system.default.config.slaves            = ${env.slaves.__topXXX__.hosts}
+                                  system.default.config.parallelism.total = ${env.slaves.__topXXX__.total.parallelism}
+                                ]]></value>
+                            </constructor-arg>
+                        </bean>
+                    </list>
+                </constructor-arg>
+            </bean>
+        </constructor-arg>
+    </bean>
+
+    <bean id="suite.flink.connectedComponents.scaleout.BDB-Graph-26" class="org.peelframework.core.beans.experiment.ExperimentSuite">
+        <constructor-arg name="experiments">
+            <bean class="org.peelframework.core.beans.experiment.ExperimentSequence">
+                <constructor-arg name="paramName" value="topXXX" />
+                <constructor-arg name="paramVals">
+                    <list>
+                        <!--<value>top004</value>-->
+                        <!--<value>top008</value>-->
+                        <!--<value>top012</value>-->
+                        <value>top016</value>
+                        <value>top020</value>
+                        <value>top024</value>
+                        <value>top028</value>
+                        <value>top032</value>
+                        <!--<value>top036</value>-->
+                        <!--<value>top040</value>-->
+                        <!--<value>top044</value>-->
+                        <!--<value>top048</value>-->
+                        <!--<value>top052</value>-->
+                        <!--<value>top056</value>-->
+                        <!--<value>top060</value>-->
+                    </list>
+                </constructor-arg>
+                <constructor-arg name="prototypes">
+                    <list value-type="org.peelframework.core.beans.experiment.Experiment">
+                        <bean parent="experiment.flink.connectedComponents">
+                            <constructor-arg name="name" value="flink.connectedComponents.BDB-Graph-26.__topXXX__" />
+                            <constructor-arg name="inputs">
+                                <set>
+                                    <ref bean="dataset.BDB-Graph-26" />
+                                </set>
+                            </constructor-arg>
+                            <constructor-arg name="config">
+                                <value><![CDATA[
+                                  numIterations                           = 10
+                                  system.default.config.slaves            = ${env.slaves.__topXXX__.hosts}
+                                  system.default.config.parallelism.total = ${env.slaves.__topXXX__.total.parallelism}
+                                ]]></value>
+                            </constructor-arg>
+                        </bean>
+                    </list>
+                </constructor-arg>
+            </bean>
+        </constructor-arg>
+    </bean>
+
+    <bean id="suite.flink.connectedComponents.scaleout.BDB-Graph-27" class="org.peelframework.core.beans.experiment.ExperimentSuite">
+        <constructor-arg name="experiments">
+            <bean class="org.peelframework.core.beans.experiment.ExperimentSequence">
+                <constructor-arg name="paramName" value="topXXX" />
+                <constructor-arg name="paramVals">
+                    <list>
+                        <!--<value>top004</value>-->
+                        <!--<value>top008</value>-->
+                        <!--<value>top012</value>-->
+                        <value>top016</value>
+                        <value>top020</value>
+                        <value>top024</value>
+                        <value>top028</value>
+                        <value>top032</value>
+                        <!--<value>top036</value>-->
+                        <!--<value>top040</value>-->
+                        <!--<value>top044</value>-->
+                        <!--<value>top048</value>-->
+                        <!--<value>top052</value>-->
+                        <!--<value>top056</value>-->
+                        <!--<value>top060</value>-->
+                    </list>
+                </constructor-arg>
+                <constructor-arg name="prototypes">
+                    <list value-type="org.peelframework.core.beans.experiment.Experiment">
+                        <bean parent="experiment.flink.connectedComponents">
+                            <constructor-arg name="name" value="flink.connectedComponents.BDB-Graph-27.__topXXX__" />
+                            <constructor-arg name="inputs">
+                                <set>
+                                    <ref bean="dataset.BDB-Graph-27" />
                                 </set>
                             </constructor-arg>
                             <constructor-arg name="config">
