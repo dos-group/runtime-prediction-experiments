@@ -20,8 +20,6 @@
 package de.tuberlin.cit.experiments.prediction.flink;
 
 import de.tuberlin.cit.experiments.prediction.flink.shared.AbstractPageRank;
-import de.tuberlin.cit.experiments.prediction.flink.util.AccumulatorUtils;
-import org.apache.flink.api.common.JobExecutionResult;
 import org.apache.flink.api.java.DataSet;
 import org.apache.flink.api.java.ExecutionEnvironment;
 import org.apache.flink.api.java.operators.DeltaIteration;
@@ -89,8 +87,7 @@ public class PageRankDelta extends AbstractPageRank {
 
 		// execute program
 		try {
-			JobExecutionResult result = env.execute("Page Rank Iteration with Deltas");
-			AccumulatorUtils.dumpAccumulators(result);
+			env.execute("Page Rank Iteration with Deltas");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

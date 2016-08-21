@@ -20,8 +20,6 @@ package de.tuberlin.cit.experiments.prediction.flink;
 
 import java.util.Collection;
 
-import de.tuberlin.cit.experiments.prediction.flink.util.AccumulatorUtils;
-import org.apache.flink.api.common.JobExecutionResult;
 import org.apache.flink.api.common.functions.MapFunction;
 import org.apache.flink.api.common.functions.ReduceFunction;
 import org.apache.flink.api.common.functions.RichMapFunction;
