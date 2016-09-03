@@ -1,3 +1,7 @@
+# parsed results folder
+results/
+runtime-prediction-results.tgz
+
 *.iml
 .idea/
 
