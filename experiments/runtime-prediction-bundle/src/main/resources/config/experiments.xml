@@ -28,6 +28,7 @@
     <import resource="experiments.wordcount.xml"/>
     <import resource="experiments.kmeans.xml"/>
     <import resource="experiments.sgd.xml"/>
+    <import resource="experiments.sgd.stages.xml"/>
     <import resource="experiments.page-rank.xml"/>
     <import resource="experiments.connected-components.xml"/>
 

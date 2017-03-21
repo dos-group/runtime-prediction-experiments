@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.springframework.org/schema/beans"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+  <!--************************************************************************
+  * Data Generators
+  *************************************************************************-->
+
+  <!--<bean id="datagen.sgd" class="org.peelframework.flink.beans.job.FlinkJob">-->
+    <!--<constructor-arg name="runner" ref="flink-1.0.3" />-->
+    <!--<constructor-arg name="command">-->
+      <!--<value><![CDATA[-->
+        <!-- -v -c de.tuberlin.cit.experiments.prediction.datagen.FeatureDataSetGenerator \-->
+        <!--${app.path.datagens}/runtime-prediction-datagens-1.0-SNAPSHOT.jar \-->
+        <!--${datagen.sgd.points} \-->
+        <!--${datagen.sgd.dimension} \-->
+        <!--${system.hadoop-2.path.input}/sgd-input-->
+      <!--]]>-->
+      <!--</value>-->
+    <!--</constructor-arg>-->
+  <!--</bean>-->
+
+  <!--************************************************************************
+  * Data Sets
+  *************************************************************************-->
+
+  <!--<bean id="dataset.sgd" class="org.peelframework.core.beans.data.GeneratedDataSet">-->
+    <!--<constructor-arg name="src" ref="datagen.sgd" />-->
+    <!--<constructor-arg name="dst" value="${system.hadoop-2.path.input}/sgd-input" />-->
+    <!--<constructor-arg name="fs" ref="hdfs-2.7.1" />-->
+  <!--</bean>-->
+
+  <!--<bean id="dataset.sgd.copied" class="org.peelframework.core.beans.data.CopiedDataSet">-->
+    <!--<constructor-arg name="src" value="${app.path.datasets}/sgd-input.generated"/>-->
+    <!--<constructor-arg name="dst" value="${system.hadoop-2.path.input}/sgd-input"/>-->
+    <!--<constructor-arg name="fs" ref="hdfs-2.7.1"/>-->
+  <!--</bean>-->
+
+  <!--************************************************************************
+  * Outputs
+  *************************************************************************-->
+
+  <!-- connected components output -->
+  <!--<bean id="sgd.output" class="org.peelframework.core.beans.data.ExperimentOutput">-->
+      <!--<constructor-arg name="path" value="${system.hadoop-2.path.output}/sgd-output" />-->
+      <!--<constructor-arg name="fs" ref="hdfs-2.7.1" />-->
+  <!--</bean>-->
+
+  <!--************************************************************************
+  * Experiments
+  *************************************************************************-->
+
+  <bean id="experiment.spark-2.1.0" class="org.peelframework.spark.beans.experiment.SparkExperiment" abstract="true">
+      <constructor-arg name="runner" ref="spark-2.1.0"/>
+  </bean>
+
+  <bean id="experiment.spark.sgd.stages" parent="experiment.spark-2.1.0" abstract="true">
+    <constructor-arg name="command">
+        <value>
+            <![CDATA[
+                --class de.tuberlin.cit.experiments.prediction.spark.LinearRegression
+                --master yarn
+                --deploy-mode cluster
+                ${app.path.apps}/runtime-prediction-spark-jobs-1.0-SNAPSHOT.jar
+                ${system.hadoop-2.path.input}/sgd-input
+            ]]>
+        </value>
+    </constructor-arg>
+    <constructor-arg name="runs" value="10" />
+    <constructor-arg name="outputs">
+        <set value-type="org.peelframework.core.beans.data.ExperimentOutput">
+            <ref bean="sgd.output" />
+        </set>
+    </constructor-arg>
+  </bean>
+
+  <!--************************************************************************
+  * Suites
+  *************************************************************************-->
+
+  <bean id="suite.spark.sgd.stages.test" class="org.peelframework.core.beans.experiment.ExperimentSuite">
+      <constructor-arg name="experiments">
+          <list value-type="org.peelframework.core.beans.experiment.Experiment">
+              <bean parent="experiment.spark.sgd.stages">
+                  <constructor-arg name="name" value="spark.sgd.stages" />
+                  <constructor-arg name="runs" value="1"/>
+                  <constructor-arg name="inputs">
+                      <set><ref bean="dataset.sgd" /></set>
+                  </constructor-arg>
+                  <constructor-arg name="config">
+                      <value>
+                          <![CDATA[
+                              datagen.sgd.points                      = 20000000
+                              datagen.sgd.dimension                   = 20
+                              system.default.config.slaves            = ${env.slaves.all.hosts}
+                              system.default.config.parallelism.total = ${env.slaves.all.total.parallelism}
+                          ]]>
+                      </value>
+                  </constructor-arg>
+              </bean>
+          </list>
+      </constructor-arg>
+  </bean>
+
+  <!--************************************************************************
+  * Overridden system beans
+  *************************************************************************-->
+
+  <!-- Spark (overridden 'spark-2.1.0' bean that depends on 'yarn-2.7.1' and 'hdfs-2.7.1') -->
+  <bean id="spark-2.1.0" class="org.peelframework.spark.beans.system.Spark" parent="system">
+      <constructor-arg name="version" value="2.1.0"/>
+      <constructor-arg name="configKey" value="spark" />
+      <constructor-arg name="lifespan" value="PROVIDED"/>
+      <constructor-arg name="dependencies">
+          <set value-type="org.peelframework.core.beans.system.System">
+              <ref bean="hdfs-2.7.1"/>
+              <ref bean="yarn-2.7.1"/>
+          </set>
+      </constructor-arg>
+  </bean>
+
+</beans>
