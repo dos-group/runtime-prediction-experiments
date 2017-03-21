@@ -60,8 +60,6 @@
         <value>
             <![CDATA[
                 --class de.tuberlin.cit.experiments.prediction.spark.LinearRegression
-                --master yarn
-                --deploy-mode cluster
                 ${app.path.apps}/runtime-prediction-spark-jobs-1.0-SNAPSHOT.jar
                 ${system.hadoop-2.path.input}/sgd-input
             ]]>
@@ -111,11 +109,11 @@
   <bean id="spark-2.1.0" class="org.peelframework.spark.beans.system.Spark" parent="system">
       <constructor-arg name="version" value="2.1.0"/>
       <constructor-arg name="configKey" value="spark" />
-      <constructor-arg name="lifespan" value="PROVIDED"/>
+      <constructor-arg name="lifespan" value="EXPERIMENT"/>
       <constructor-arg name="dependencies">
           <set value-type="org.peelframework.core.beans.system.System">
               <ref bean="hdfs-2.7.1"/>
-              <ref bean="yarn-2.7.1"/>
+              <!--<ref bean="yarn-2.7.1"/>-->
           </set>
       </constructor-arg>
   </bean>
